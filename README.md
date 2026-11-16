@@ -13,6 +13,7 @@ Local webhook capture, inspection and replay server — debug incoming webhooks 
 - **In-memory ring buffer** keeps the last 200 requests; older ones are evicted automatically so memory stays bounded
 - **Typed JSON read API**: `GET /api/hooks` (list, newest first) and `GET /api/hooks/:id` (single entry, 404 when unknown)
 - **Local-only by default**: the server binds to `127.0.0.1`
+- **Installable CLI**: `npm install -g .` puts a `hookdock` command on your PATH
 - Dashboard UI and replay forwarding are planned for the next iteration
 
 ## Quickstart
@@ -23,17 +24,38 @@ npm run build
 npm start        # serves http://127.0.0.1:3000
 ```
 
+Install the CLI globally so the `hookdock` command is available on your PATH:
+
+```bash
+npm install -g .      # the "prepare" script builds dist/ before the bin is linked
+hookdock              # http://127.0.0.1:3000
+hookdock --port 4000  # custom port
+```
+
+Or run the bin straight from a checkout without installing it globally:
+
+```bash
+npx . --port 4000           # locally; once published to the npm registry: npx hookdock --port 4000
+node dist/index.js --port 4000
+```
+
 Development (compile, then restart on change):
 
 ```bash
 npm run dev
 ```
 
-Run the CLI with a custom port:
+## CLI usage
 
-```bash
-node dist/index.js --port 4000
+```text
+Usage: hookdock [--port <n>]
+
+Options:
+  --port <n>   Port to listen on, 1..65535 (default: $PORT, then 3000)
+  -h, --help   Show this help and exit
 ```
+
+The server always binds to `127.0.0.1` — it is meant for local debugging only, never expose it publicly.
 
 ## Example
 
@@ -76,12 +98,12 @@ curl -s http://127.0.0.1:3000/api/hooks/<id>   # single entry
 - `src/server.ts` — `createServer()` Fastify factory. A catch-all `parseAs: 'buffer'` content-type parser stores every payload verbatim; JSON bodies are additionally parsed into `body`.
 - `src/store.ts` — `HookStore`, the ring buffer (default capacity 200, oldest evicted first). IDs are UUIDs, timestamps ISO-8601.
 - `src/types.ts` — the `HookRequest` shape shared by storage and the JSON API.
-- `src/index.ts` — CLI entrypoint (`hookdock --port 3000`), binds `127.0.0.1` and calls `listen()`; the app factory is exported separately from `listen()` so tests can drive it with supertest on an ephemeral port.
+- `src/index.ts` — CLI entrypoint (`hookdock --port 3000`). It starts with `#!/usr/bin/env node`, which `tsc` preserves in `dist/index.js`; `package.json` maps the command via `"bin": { "hookdock": "dist/index.js" }` and ships the build via `"files": ["dist"]`, so `npm install -g .` links an executable `hookdock` onto your PATH. The app factory is exported separately from `listen()` so tests can drive it with supertest on an ephemeral port.
 
 ## Running tests
 
 ```bash
-npm test      # vitest run — capture, list, detail, 404, content-type handling, ring-buffer eviction
+npm test      # vitest run — capture, list, detail, 404, content-type handling, ring-buffer eviction, CLI smoke test, bin packaging
 npm run lint
 ```
 

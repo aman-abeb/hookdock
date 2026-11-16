@@ -4,6 +4,15 @@ import { createServer } from './server.js';
 const DEFAULT_PORT = 3000;
 const HOST = '127.0.0.1';
 
+const USAGE = `Usage: hookdock [--port <n>]
+
+Local webhook capture, inspection and replay server. Binds to ${HOST} only.
+
+Options:
+  --port <n>   Port to listen on, 1..65535 (default: $PORT, then ${DEFAULT_PORT})
+  -h, --help   Show this help and exit
+`;
+
 /** Resolve the listen port from `--port <n>` or the `PORT` env var (default 3000). */
 function resolvePort(argv: string[]): number {
   const flagIndex = argv.indexOf('--port');
@@ -16,7 +25,13 @@ function resolvePort(argv: string[]): number {
   return port;
 }
 
-const port = resolvePort(process.argv.slice(2));
+const args = process.argv.slice(2);
+if (args.includes('-h') || args.includes('--help')) {
+  console.log(USAGE);
+  process.exit(0);
+}
+
+const port = resolvePort(args);
 const app = await createServer();
 await app.listen({ host: HOST, port });
 
