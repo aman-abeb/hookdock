@@ -110,10 +110,10 @@ npm run lint
 <!-- builder:roadmap:start -->
 ## Status
 
-**In active development:** 0 of 2 milestones done.
+**In active development:** 1 of 2 milestones done.
 
 ## Roadmap
 
-- [ ] **Capture core + typed JSON API**: Fastify factory with POST /hook/:name capturing method, headers, query and raw body into an in-memory ring buffer (last 200 requests). Read API at GET /api/hooks and GET /api/hooks/:id. CLI bin (hookdock --port 3000) that starts the server bound to 127.0.0.1. Vitest + supertest tests for capture, listing, detail, 404 and content-type handling. Runnable: npm test green and a curl POST returns 200 with a stored id.
+- [x] **Capture core + typed JSON API**: Fastify factory with POST /hook/:name capturing method, headers, query and raw body into an in-memory ring buffer (last 200 requests). Read API at GET /api/hooks and GET /api/hooks/:id. CLI bin (hookdock --port 3000) that starts the server bound to 127.0.0.1. Vitest + supertest tests for capture, listing, detail, 404 and content-type handling. Runnable: npm test green and a curl POST returns 200 with a stored id.
 - [ ] **Dashboard UI + replay forwarding**: Serve a zero-build single-page dashboard from / via @fastify/static (vanilla JS polling /api/hooks) showing a request list with timestamps, expandable pretty-printed JSON body and headers, and per-row Replay + Delete buttons. POST /api/hooks/:id/replay forwards the stored request to a target URL (env HOOKDOCK_REPLAY_TARGET, default http://localhost:8080) using global fetch and returns upstream status; DELETE /api/hooks clears history. Tests for replay forwarding (mocked fetch) and static asset serving. README with curl-to-dashboard demo and screenshot.
 <!-- builder:roadmap:end -->
