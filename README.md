@@ -200,10 +200,17 @@ npm run build
 <!-- builder:roadmap:start -->
 ## Status
 
-**In active development:** 1 of 2 milestones done.
+**Complete.** HookDock is a finished local webhook capture, inspection and replay server with a zero-build dashboard served from Fastify. It stores the last 200 requests in memory, exposes a typed JSON API for listing/detail/replay/clear, and ships with a polling dashboard featuring expandable headers, pretty-printed bodies, and per-row Replay/Delete controls. All 28 tests pass and the project is ready to ship.
 
 ## Roadmap
 
 - [x] **Capture core + typed JSON API**: Fastify factory with POST /hook/:name capturing method, headers, query and raw body into an in-memory ring buffer (last 200 requests). Read API at GET /api/hooks and GET /api/hooks/:id. CLI bin (hookdock --port 3000) that starts the server bound to 127.0.0.1. Vitest + supertest tests for capture, listing, detail, 404 and content-type handling. Runnable: npm test green and a curl POST returns 200 with a stored id.
-- [ ] **Dashboard UI + replay forwarding**: Serve a zero-build single-page dashboard from / via @fastify/static (vanilla JS polling /api/hooks) showing a request list with timestamps, expandable pretty-printed JSON body and headers, and per-row Replay + Delete buttons. POST /api/hooks/:id/replay forwards the stored request to a target URL (env HOOKDOCK_REPLAY_TARGET, default http://localhost:8080) using global fetch and returns upstream status; DELETE /api/hooks clears history. Tests for replay forwarding (mocked fetch) and static asset serving. README with curl-to-dashboard demo and screenshot.
+- [x] **Dashboard UI + replay forwarding**: Serve a zero-build single-page dashboard from / via @fastify/static (vanilla JS polling /api/hooks) showing a request list with timestamps, expandable pretty-printed JSON body and headers, and per-row Replay + Delete buttons. POST /api/hooks/:id/replay forwards the stored request to a target URL (env HOOKDOCK_REPLAY_TARGET, default http://localhost:8080) using global fetch and returns upstream status; DELETE /api/hooks clears history. Tests for replay forwarding (mocked fetch) and static asset serving. README with curl-to-dashboard demo and screenshot.
+
+## Ideas for future work
+
+- Replace polling with WebSocket/SSE for real-time dashboard updates
+- Add request filtering, search and tagging in the dashboard
+- Support exporting/importing captured request history as JSON
+- Add optional request diffing between replay attempts
 <!-- builder:roadmap:end -->
